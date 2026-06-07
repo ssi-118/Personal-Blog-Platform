@@ -15,12 +15,14 @@ const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: [
-      "https://personal-blog-platform-main.vercel.app"
-    ],
+    origin: ["https://personal-blog-platform-main.vercel.app"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
