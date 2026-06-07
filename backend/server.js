@@ -4,73 +4,72 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const User = require('./models/userModel');
 
-// Load environment variables
 dotenv.config();
-
-// Connect to MongoDB
-connectDB();
 
 const app = express();
 
-// Middlewares
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: ["https://personal-blog-platform-main.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
-
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', 'https://personal-blog-platform-main.vercel.app');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    return res.sendStatus(204);
-  }
-  next();
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Auto-seed default Admin on startup if none exists
-const seedAdmin = async () => {
-  try {
-    const adminCount = await User.countDocuments();
-    if (adminCount === 0) {
-      console.log('No user accounts detected. Seeding default Admin user...');
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
-      const adminPassword = process.env.ADMIN_PASSWORD || 'adminpassword123';
-      const adminUsername = process.env.ADMIN_USERNAME || 'Blog Admin';
+let adminSeeded = false;
 
-      await User.create({
-        username: adminUsername,
-        email: adminEmail,
-        password: adminPassword, // will be hashed by mongoose pre-save hook
-      });
-      console.log('Default Admin seeded successfully!');
-      console.log(`Email: ${adminEmail}`);
-      console.log(`Password: ${adminPassword}`);
-    }
-  } catch (error) {
-    console.error(`Admin seeding failed: ${error.message}`);
+const seedAdmin = async () => {
+  const adminCount = await User.countDocuments();
+  if (adminCount === 0) {
+    console.log('No user accounts detected. Seeding default Admin user...');
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'adminpassword123';
+    const adminUsername = process.env.ADMIN_USERNAME || 'Blog Admin';
+
+    await User.create({
+      username: adminUsername,
+      email: adminEmail,
+      password: adminPassword,
+    });
+    console.log('Default Admin seeded successfully!');
   }
 };
 
-seedAdmin();
+const ensureDb = async (req, res, next) => {
+  if (!process.env.MONGO_URI) {
+    return res.status(503).json({
+      message: 'MONGO_URI environment variable is not configured on the server.',
+    });
+  }
 
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/posts', require('./routes/postRoutes'));
-app.use('/api/comments', require('./routes/commentRoutes'));
+  try {
+    await connectDB();
+    if (!adminSeeded) {
+      adminSeeded = true;
+      await seedAdmin();
+    }
+    next();
+  } catch (error) {
+    console.error(`Database connection failed: ${error.message}`);
+    res.status(503).json({ message: 'Database connection failed. Check MONGO_URI and Atlas network access.' });
+  }
+};
 
-// Root Route
 app.get('/', (req, res) => {
   res.send('Personal Blog API is running...');
 });
 
-// Error handling middleware
+app.use('/api/auth', ensureDb, require('./routes/authRoutes'));
+app.use('/api/posts', ensureDb, require('./routes/postRoutes'));
+app.use('/api/comments', ensureDb, require('./routes/commentRoutes'));
+
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode);
@@ -82,9 +81,17 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Server running in development mode on port ${PORT}`);
-  });
+  connectDB()
+    .then(() => seedAdmin())
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Server running in development mode on port ${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error(`Failed to start server: ${error.message}`);
+      process.exit(1);
+    });
 }
 
 module.exports = app;
