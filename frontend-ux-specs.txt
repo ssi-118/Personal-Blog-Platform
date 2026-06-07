@@ -1,0 +1,134 @@
+Frontend User Experience Specification
+
+Scope: Only the frontend screens and user-visible interactions. This document describes the inputs users can provide and the outputs they see in the UI.
+
+1. Navbar / Global UI
+
+Inputs:
+- Click "Blog" to return to the home page.
+- Click "Admin Login" to access the login page when not authenticated.
+- Click "Dashboard" to go to the admin dashboard when logged in.
+- Click "Write" to open the post editor when logged in.
+- Click the theme toggle button to switch between light and dark mode.
+- Click the logout button when logged in.
+
+Outputs:
+- Brand label "DevCanvas" and icon displayed at top.
+- Buttons for navigation and admin actions.
+- Theme icon changes between moon and sun.
+
+2. Home Page
+
+Inputs:
+- Search input placeholder "Search articles...".
+- Submit search by pressing Search button.
+- Category dropdown "All Categories" plus dynamic category options loaded from posts.
+- Clear Filters button appears when search or filters are active.
+
+Outputs:
+- Hero section with heading "Welcome to my Blog", descriptive text, social details, and icon.
+- Filter panel with search field, search button, category dropdown, and optional Clear Filters.
+- Loading spinner while posts are fetched.
+- Grid of post cards when posts exist.
+- "No articles found" message if the search/filter returns zero posts.
+- Each post card displays:
+  - cover image or gradient placeholder,
+  - category badge,
+  - published date,
+  - read time,
+  - views count,
+  - title,
+  - summary,
+  - a link labeled "Read Article".
+
+3. Post Detail Page
+
+Inputs:
+- Click back link "Back to Articles".
+- Click section links in the sidebar Table of Contents if headings are available.
+- Submit a comment by filling:
+  - Name,
+  - Email,
+  - Comment text,
+  - then clicking "Post Comment".
+
+Outputs:
+- Article header with category badge, title, metadata (date, read time, views).
+- Cover image displayed at top if provided.
+- Article body rendered from markdown with headings, bold text, lists, blockquotes, code blocks, and paragraphs.
+- Tag chips shown below the article content.
+- Table of Contents sidebar listing `##` headings from the article content.
+- Comments section showing:
+  - comment count,
+  - comment form,
+  - success or error message after submitting a comment,
+  - existing approved comments list,
+  - fallback text "No comments yet. Be the first to comment!" if none.
+- Error page with "Article Not Found" if the requested slug does not exist.
+
+4. Login Page
+
+Inputs:
+- Email address field placeholder "admin@example.com".
+- Password field placeholder "••••••••".
+- Click "Sign In" button.
+
+Outputs:
+- Login card titled "Admin Login".
+- Explanation text "Sign in to manage posts and comments".
+- Error alert area showing invalid credentials or other login problems.
+- Button label changes to "Logging in..." while the request is in progress.
+
+5. Admin Dashboard Page
+
+Inputs:
+- Click "Create Post" to open the post editor.
+- Click the Posts or Comments tab to switch views.
+- Click delete buttons for posts or comments and confirm deletion.
+- Click approve button for pending comments.
+
+Outputs:
+- Header with "Admin Dashboard" and welcome text.
+- Stats cards showing total posts, total views, and total comments.
+- Tab navigation with counts: Posts and Comments.
+- Posts table with title, status, category, and action buttons.
+- Comments table with author, excerpt, approval state, and actions.
+- Loading spinner while dashboard data loads.
+
+6. Post Editor Page
+
+Inputs:
+- Title text input with placeholder "e.g. Mastering Async/Await in Node.js".
+- Category dropdown with values like Technology, Design, Programming, Tutorial, Career, Other.
+- Tags input placeholder "e.g. javascript, backend, express".
+- Cover image URL input placeholder "https://images.unsplash.com/... or blank".
+- Status dropdown with Draft and Published options.
+- Summary textarea.
+- Content textarea for markdown content.
+- Click "Preview" to switch into preview mode.
+- Click "Edit Mode" to return to editing if previewing.
+- Click "Save Article" to submit the post.
+- Click back button to return to the admin dashboard.
+
+Outputs:
+- Page header shows either "Write New Article" or "Edit Article".
+- Action buttons for preview and save.
+- Form fields for title, category, tags, cover image, status, summary, and content.
+- Saving state shown as "Saving..." on the save button.
+- Alert if required fields are missing when saving.
+
+Examples
+
+Example 1: Search and open an article
+- User lands on the Home page.
+- They type "React" into the search box and click Search.
+- The page shows filtered cards matching "React" or the selected category.
+- The user clicks "Read Article" on a post card.
+- The Post Detail page displays the article title, metadata, content, tags, and comments.
+
+Example 2: Comment on an article
+- User opens a post detail page.
+- They fill the comment form with Name, Email, and Comment text.
+- They click "Post Comment".
+- The page displays a confirmation message: "Your comment has been submitted and is pending moderation!"
+- If comments exist, they appear below the form with author name, date, and content.
