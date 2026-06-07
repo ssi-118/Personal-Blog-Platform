@@ -127,3 +127,8 @@ Deploy **frontend** and **backend** as two separate Vercel projects:
 | Backend | `backend` | `MONGO_URI`, `JWT_SECRET`, `FRONTEND_URL` |
 
 After changing environment variables, redeploy so the build picks up the latest values (especially `VITE_API_URL` on the frontend).
+
+## Live Demo
+``
+https://personal-blog-platform-main.vercel.app/
+``
