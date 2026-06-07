@@ -4,13 +4,11 @@ A full-stack personal blog with a public reading experience and an admin dashboa
 
 ## Tech Stack
 
-| Layer | Technologies |
-|-------|--------------|
-| **Frontend** | React 19, Vite, React Router, Lucide React |
-| **Backend** | Node.js, Express, Mongoose |
-| **Database** | MongoDB |
-| **Auth** | JWT, bcryptjs |
-| **Deployment** | Vercel (frontend and backend as separate projects) |
+- **Frontend:** React 19, Vite, React Router, Lucide React
+- **Backend:** Node.js, Express, Mongoose
+- **Database:** MongoDB
+- **Auth:** JWT, bcryptjs
+- **Deployment:** Vercel (frontend and backend as separate projects)
 
 ## Project Structure
 
@@ -92,28 +90,22 @@ If no admin user exists, one is created on first API request:
 
 ## Available Scripts
 
-### Backend (`backend/`)
+**Backend** (`backend/`)
 
-| Command | Description |
-|---------|-------------|
-| `npm start` | Start the Express server |
+- `npm start` — Start the Express server
 
-### Frontend (`frontend/`)
+**Frontend** (`frontend/`)
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start the Vite dev server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview the production build locally |
-| `npm run lint` | Run ESLint |
+- `npm run dev` — Start the Vite dev server
+- `npm run build` — Build for production
+- `npm run preview` — Preview the production build locally
+- `npm run lint` — Run ESLint
 
 ## API Overview
 
-| Route prefix | Purpose |
-|--------------|---------|
-| `/api/auth` | Login and session |
-| `/api/posts` | Blog posts (public + admin) |
-| `/api/comments` | Comments on posts |
+- `/api/auth` — Login and session
+- `/api/posts` — Blog posts (public + admin)
+- `/api/comments` — Comments on posts
 
 Health check: `GET /` returns `Personal Blog API is running...`
 
@@ -121,14 +113,16 @@ Health check: `GET /` returns `Personal Blog API is running...`
 
 Deploy **frontend** and **backend** as two separate Vercel projects:
 
-| Project | Root Directory | Key env vars |
-|---------|----------------|--------------|
-| Frontend | `frontend` | `VITE_API_URL=https://your-backend.vercel.app/api` |
-| Backend | `backend` | `MONGO_URI`, `JWT_SECRET`, `FRONTEND_URL` |
+**Frontend**
+- Root Directory: `frontend`
+- Env vars: `VITE_API_URL=https://your-backend.vercel.app/api`
+
+**Backend**
+- Root Directory: `backend`
+- Env vars: `MONGO_URI`, `JWT_SECRET`, `FRONTEND_URL`
 
 After changing environment variables, redeploy so the build picks up the latest values (especially `VITE_API_URL` on the frontend).
 
 ## Live Demo
-``
+
 https://personal-blog-platform-main.vercel.app/
-``
